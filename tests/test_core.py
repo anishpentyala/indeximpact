@@ -260,4 +260,4 @@ def test_synthetic_workflow_output_matches_checked_in_artifact():
     )
     assert json.loads(output) == json.loads(
         (root / "examples/compare_joins.expected.json").read_text()
-  )
+    )
