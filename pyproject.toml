@@ -1,0 +1,24 @@
+[build-system]
+requires = ["hatchling>=1.26,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "indeximpact"
+version = "0.1.0"
+description = "Coordinate-only impact reports for explicit xarray alignment choices"
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+dependencies = ["numpy>=2.1", "pandas>=2.2.3", "xarray>=2024.10.0"]
+
+[project.optional-dependencies]
+test = ["pytest>=8.3", "dask[array]>=2024.10.0"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/indeximpact"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py310"
