@@ -55,7 +55,7 @@ Default position samples contain at most10 positions; `sample_limit` accepts0 th
 
 - Explicit inner/outer/left/right/exact joins on at least2 named inputs. Dictionary order decides left/right, separately for each shared dimension.
 - DataArray/Dataset inputs; string names; one same-name built-in PandasIndex per dimension. Supported shared-axis labels are unique, nonmissing, finite plain numeric/bool/string or timezone-naive datetime/timedelta, with matching dtypes across shared axes.
-- Reject shared-axis mixed object labels, custom indexes, MultiIndex, multiple indexes per dimension, category/interval/tz indexes, duplicate/nonfinite/missing labels, mixed dtypes and shared unindexed dimensions. It does not fall back to positional matching.
+- Reject shared-axis mixed object labels, custom indexes, MultiIndex, multiple indexes per dimension, category/interval/tz indexes, duplicate/nonfinite/missing labels, mixed dtypes, shared unindexed dimensions and repeated dimension names within a data variable (even on unshared axes). It does not fall back to positional matching.
 - Unshared dimensions are unchanged by alignment, not broadcast. Non-index coordinates, attributes, units, calendars and values are not checked. No override, exclude, explicit target indexes or tolerance matching.
 - Reads index metadata into memory; never computes or changes data arrays. Large coordinate indexes can still cost memory and time. No constant-memory claim.
 - Cell counts are geometric positions, not valid measurements. New fill positions may receive NaN or a caller's fill value during actual alignment. Existing NaNs are not counted.
@@ -65,10 +65,12 @@ Default position samples contain at most10 positions; `sample_limit` accepts0 th
 
 Run `python -m pytest -q` and `python tests/native_oracle.py` in an environment with xarray, NumPy, pandas, Dask and pytest. Run the example with `python examples/compare_joins.py`; its output is checked into the source tree.
 
-50 fixed tests and12,000 deterministic input/join comparisons passed on each of:
+72 fixed tests and12,000 deterministic input/join comparisons passed on each of:
 
 - Python3.10.12, xarray2024.10.0, pandas2.2.3, NumPy2.1.3, Dask2024.10.0.
 - Python3.13, xarray2026.9.0, pandas3.1.1, NumPy2.5.4, Dask2026.8.0.
+
+Repeated variable dimensions are deliberately rejected: xarray permits their construction with a warning, but a dimension-size mapping collapses repeated names and cannot support this report's cell accounting. The causal control produced21 failures and51 passes before this refusal; after the fix all72 tests pass. The21 failures were the20 DataArray/Dataset, shared/unshared and join combinations plus the lazy-data refusal case. A distinct-axis negative control preserves native counts.
 
 This is two tested environments, not proof of every version between them. Random comparisons cover integer axes; dedicated cases cover strings/times. A delayed Dask data bomb proves the tested report path does not compute data arrays. A causal regression reproduces the original private implementation's incorrect sorting against empty indexes and passes after matching native union/intersection semantics.
 
