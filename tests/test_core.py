@@ -261,3 +261,49 @@ def test_synthetic_workflow_output_matches_checked_in_artifact():
     assert json.loads(output) == json.loads(
         (root / "examples/compare_joins.expected.json").read_text()
     )
+
+
+@pytest.mark.parametrize("join", ["inner", "outer", "left", "right", "exact"])
+@pytest.mark.parametrize("as_dataset", [False, True])
+@pytest.mark.parametrize("shared", [False, True])
+def test_repeated_data_variable_dimensions_are_rejected(join, as_dataset, shared):
+    # xarray allows construction with a warning, but sizes loses repeated axes.
+    with pytest.warns(UserWarning, match="Duplicate dimension names"):
+        repeated = xr.DataArray(
+            np.zeros((2, 2)), dims=("x", "x"), coords={"x": [1, 2]}, name="v"
+        )
+        left = repeated.to_dataset() if as_dataset else repeated
+    right = arr([1, 2]) if shared else arr([1, 2], dims=("y",))
+    with pytest.raises(Unsupported, match="repeated data variable dimensions"):
+        inspect({"left": left, "right": right}, join=join)
+
+
+def test_repeated_dimension_refusal_does_not_compute_lazy_data():
+    import dask.array as da
+    from dask import delayed
+
+    @delayed
+    def boom():
+        raise AssertionError("data computation forbidden")
+
+    with pytest.warns(UserWarning, match="Duplicate dimension names"):
+        repeated = xr.DataArray(
+            da.from_delayed(boom(), shape=(2, 2), dtype=float),
+            dims=("x", "x"), coords={"x": [1, 2]}, name="v",
+        )
+    with pytest.raises(Unsupported, match="repeated data variable dimensions"):
+        inspect({"left": repeated, "right": arr([1, 2])})
+
+
+def test_distinct_data_variable_dimensions_keep_native_geometry():
+    left = xr.Dataset(
+        {"square": (("x", "y"), np.zeros((2, 2))), "scalar": 7},
+        coords={"x": [1, 2], "y": [3, 4]},
+    )
+    report = inspect({"left": left, "right": left.copy()}, join="exact")
+    square = report["variables"]["left"]["square"]
+    assert report["status"] == "UNCHANGED"
+    assert square["source_cells"] == square["aligned_cells"] == 4
+    assert square["retained_source_cells"] == 4
+    assert square["dropped_source_cells"] == square["new_fill_positions"] == 0
+    assert report["variables"]["left"]["scalar"]["source_cells"] == 1
