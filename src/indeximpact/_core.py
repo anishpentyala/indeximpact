@@ -64,6 +64,9 @@ def inspect(objects, *, join="inner", sample_limit=10):
     ):
         raise Unsupported("nonempty string dimension names required")
     for o in objects.values():
+        variables = [o.variable] if isinstance(o, xr.DataArray) else o.data_vars.values()
+        if any(len(v.dims) != len(set(v.dims)) for v in variables):
+            raise Unsupported("repeated data variable dimensions are unsupported")
         if any(
             type(ix) is not PandasIndex or name != ix.dim
             for name, ix in o.xindexes.items()
