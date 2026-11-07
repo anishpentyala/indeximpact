@@ -1,0 +1,87 @@
+{
+  "exact": {
+    "status": "REFUSED",
+    "reference_temperature": {
+      "source_cells": 9,
+      "aligned_cells": null,
+      "retained_source_cells": null,
+      "dropped_source_cells": null,
+      "new_fill_positions": null
+    },
+    "candidate_temperature": {
+      "source_cells": 6,
+      "aligned_cells": null,
+      "retained_source_cells": null,
+      "dropped_source_cells": null,
+      "new_fill_positions": null
+    }
+  },
+  "inner": {
+    "status": "CHANGED",
+    "reference_temperature": {
+      "source_cells": 9,
+      "aligned_cells": 2,
+      "retained_source_cells": 2,
+      "dropped_source_cells": 7,
+      "new_fill_positions": 0
+    },
+    "candidate_temperature": {
+      "source_cells": 6,
+      "aligned_cells": 2,
+      "retained_source_cells": 2,
+      "dropped_source_cells": 4,
+      "new_fill_positions": 0
+    }
+  },
+  "outer": {
+    "status": "CHANGED",
+    "reference_temperature": {
+      "source_cells": 9,
+      "aligned_cells": 16,
+      "retained_source_cells": 9,
+      "dropped_source_cells": 0,
+      "new_fill_positions": 7
+    },
+    "candidate_temperature": {
+      "source_cells": 6,
+      "aligned_cells": 16,
+      "retained_source_cells": 6,
+      "dropped_source_cells": 0,
+      "new_fill_positions": 10
+    }
+  },
+  "left": {
+    "status": "CHANGED",
+    "reference_temperature": {
+      "source_cells": 9,
+      "aligned_cells": 9,
+      "retained_source_cells": 9,
+      "dropped_source_cells": 0,
+      "new_fill_positions": 0
+    },
+    "candidate_temperature": {
+      "source_cells": 6,
+      "aligned_cells": 9,
+      "retained_source_cells": 2,
+      "dropped_source_cells": 4,
+      "new_fill_positions": 7
+    }
+  },
+  "right": {
+    "status": "CHANGED",
+    "reference_temperature": {
+      "source_cells": 9,
+      "aligned_cells": 6,
+      "retained_source_cells": 2,
+      "dropped_source_cells": 7,
+      "new_fill_positions": 4
+    },
+    "candidate_temperature": {
+      "source_cells": 6,
+      "aligned_cells": 6,
+      "retained_source_cells": 6,
+      "dropped_source_cells": 0,
+      "new_fill_positions": 0
+    }
+  }
+}
