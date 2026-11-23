@@ -109,10 +109,12 @@ def inspect(objects, *, join="inner", sample_limit=10):
             )
         parts = {}
         for k, p in indexes.items():
-            lost = np.flatnonzero(~p.isin(target))
-            added = np.flatnonzero(~target.isin(p))
-            common = p[p.isin(target)]
-            target_common = target[target.isin(p)]
+            source_in_target = p.isin(target)
+            target_in_source = target.isin(p)
+            lost = np.flatnonzero(~source_in_target)
+            added = np.flatnonzero(~target_in_source)
+            common = p[source_in_target]
+            target_common = target[target_in_source]
             reordered = not common.equals(target_common)
             parts[k] = {
                 "size": len(p),
